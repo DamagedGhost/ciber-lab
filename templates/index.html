@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banco Digital Seguro - Portal Institucional & Simulador de Ciberseguridad</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    :root {
+      --gob-blue: #0f3b6d;
+      --gob-red: #e31c24;
+      --gob-light: #f4f6f9;
+      --terminal-bg: #121820;
+    }
+    body {
+      background-color: var(--gob-light);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: #333;
+    }
+    .top-gob-bar {
+      height: 6px;
+      background: linear-gradient(90deg, var(--gob-blue) 0%, var(--gob-blue) 50%, var(--gob-red) 50%, var(--gob-red) 100%);
+    }
+    .navbar-gob {
+      background-color: #ffffff;
+      border-bottom: 1px solid #dee2e6;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+    .brand-title {
+      font-weight: 700;
+      color: var(--gob-blue);
+      letter-spacing: -0.5px;
+    }
+    .brand-sub {
+      font-size: 0.8rem;
+      color: #6c757d;
+      font-weight: 500;
+    }
+    .nav-tabs .nav-link {
+      font-weight: 600;
+      color: #495057;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      border-radius: 6px 6px 0 0;
+    }
+    .nav-tabs .nav-link.active {
+      color: var(--gob-blue);
+      background-color: transparent;
+      border-bottom: 3px solid var(--gob-blue);
+    }
+    .card-dashboard {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      background: #ffffff;
+      transition: transform 0.2s ease;
+    }
+    .metric-value {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+    .terminal-box {
+      background-color: var(--terminal-bg);
+      color: #4af626;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.88rem;
+      padding: 1.2rem;
+      border-radius: 8px;
+      height: 380px;
+      overflow-y: auto;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .terminal-line {
+      margin-bottom: 4px;
+      word-break: break-all;
+    }
+    .tag-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .scenario-btn {
+      text-align: left;
+      border-radius: 8px;
+      padding: 0.65rem 1rem;
+      font-weight: 600;
+    }
+    .badge-mitre {
+      background-color: #6f42c1;
+      color: white;
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra superior tricolor institucional -->
+  <div class="top-gob-bar"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-gob py-3">
+    <div class="container-fluid px-4">
+      <div class="d-flex align-items-center">
+        <div class="bg-primary text-white rounded p-2 me-3 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background-color: var(--gob-blue) !important;">
+          <i class="bi bi-shield-lock-fill fs-4"></i>
+        </div>
+        <div>
+          <div class="brand-title fs-5">BANCO DIGITAL SEGURO <span class="badge bg-secondary fs-6 ms-2">Entorno Lab</span></div>
+          <div class="brand-sub">Operación Escudo Digital · División de Ciberseguridad Ofensiva & Defensiva</div>
+        </div>
+      </div>
+      <div class="ms-auto d-flex align-items-center gap-3">
+        <span class="badge bg-light text-dark border p-2"><i class="bi bi-server text-success me-1"></i> VM Ubuntu 22.04 LTS (127.0.0.1:5000)</span>
+        <span class="badge bg-primary p-2"><i class="bi bi-person-badge me-1"></i> Rol: Blue Team Auditor</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenedor Principal con Tabs -->
+  <div class="container-fluid px-4 mt-3">
+    <ul class="nav nav-tabs border-bottom mb-4" id="mainTabs" role="tablist">
+      <li class="nav-item">
+        <button class="nav-link active" id="tab-simulador-btn" data-bs-toggle="tab" data-bs-target="#tab-simulador" type="button">
+          <i class="bi bi-activity text-primary me-2"></i>Simulador DoS/DDoS (Fases II y III)
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" id="tab-vectores-btn" data-bs-toggle="tab" data-bs-target="#tab-vectores" type="button">
+          <i class="bi bi-virus text-danger me-2"></i>Laboratorio de 5 Vectores (Evidencias PPT)
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" id="tab-portal-btn" data-bs-toggle="tab" data-bs-target="#tab-portal" type="button">
+          <i class="bi bi-bank text-info me-2"></i>Portal Financiero Ficticio
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" id="tab-soc-btn" data-bs-toggle="tab" data-bs-target="#tab-soc" type="button">
+          <i class="bi bi-terminal-fill text-dark me-2"></i>Consola SOC / Telemetría en Vivo
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="mainTabsContent">
+
+      <!-- ========================================== -->
+      <!-- TAB 1: SIMULADOR DoS/DDoS (PAUTA OFICIAL)  -->
+      <!-- ========================================== -->
+      <div class="tab-pane fade show active" id="tab-simulador" role="tabpanel">
+        <div class="row g-4">
+          
+          <!-- Panel Izquierdo: Parámetros del Simulador -->
+          <div class="col-lg-4">
+            <div class="card card-dashboard p-4 mb-4">
+              <h5 class="fw-bold mb-3 text-primary d-flex align-items-center">
+                <i class="bi bi-sliders me-2"></i>Parámetros del Simulador
+              </h5>
+              <p class="text-muted small">
+                Modelo matemático de degradación de disponibilidad conforme a la pauta del desafío.
+              </p>
+
+              <!-- Escenarios Preconfigurados de la Pauta -->
+              <label class="form-label fw-bold small text-uppercase text-secondary">Escenarios Oficiales (1 Clic)</label>
+              <div class="d-grid gap-2 mb-4">
+                <button class="btn btn-outline-success scenario-btn" onclick="cargarEscenario('A')">
+                  <div class="d-flex justify-content-between">
+                    <span>A. Operación normal</span>
+                    <span class="badge bg-success">100 / 30 / 0</span>
+                  </div>
+                  <div class="small fw-normal text-muted">Mitigación: OFF</div>
+                </button>
+                <button class="btn btn-outline-warning text-dark scenario-btn" onclick="cargarEscenario('B')">
+                  <div class="d-flex justify-content-between">
+                    <span>B. Incremento moderado</span>
+                    <span class="badge bg-warning text-dark">100 / 30 / 100</span>
+                  </div>
+                  <div class="small fw-normal text-muted">Mitigación: OFF</div>
+                </button>
+                <button class="btn btn-outline-danger scenario-btn" onclick="cargarEscenario('C')">
+                  <div class="d-flex justify-content-between">
+                    <span>C. Sobrecarga crítica</span>
+                    <span class="badge bg-danger">100 / 30 / 400</span>
+                  </div>
+                  <div class="small fw-normal text-muted">Mitigación: OFF (Ataque DoS masivo)</div>
+                </button>
+                <button class="btn btn-outline-primary scenario-btn" onclick="cargarEscenario('D')">
+                  <div class="d-flex justify-content-between">
+                    <span>D. Sobrecarga mitigada</span>
+                    <span class="badge bg-primary">100 / 30 / 400</span>
+                  </div>
+                  <div class="small fw-normal text-muted">Mitigación: ON (-80% tráfico malicioso)</div>
+                </button>
+              </div>
+
+              <hr class="my-3">
+
+              <!-- Ajustes Manuales -->
+              <div class="mb-3">
+                <label class="form-label fw-bold small">Capacidad del Servicio (unidades)</label>
+                <input type="number" id="inp-capacidad" class="form-control" value="100" min="10" max="1000">
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-bold small">Demanda Legítima (unidades)</label>
+                <input type="number" id="inp-legitimo" class="form-control" value="30" min="1" max="500">
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-bold small">Tráfico Adicional / Ataque (unidades)</label>
+                <input type="number" id="inp-adicional" class="form-control" value="0" min="0" max="2000">
+              </div>
+
+              <div class="form-check form-switch mb-4">
+                <input class="form-check-input" type="checkbox" id="inp-mitigacion">
+                <label class="form-check-label fw-bold small" for="inp-mitigacion">
+                  Activar Mitigación Educativa (Reducción del 80%)
+                </label>
+              </div>
+
+              <div class="d-grid gap-2">
+                <button class="btn btn-primary fw-bold" onclick="ejecutarCalculoManual()">
+                  <i class="bi bi-play-circle-fill me-2"></i>Calcular Estado
+                </button>
+                <button class="btn btn-outline-danger fw-bold" id="btn-burst" onclick="lanzarRafagaReal()">
+                  <i class="bi bi-lightning-charge-fill me-2"></i>Lanzar Ráfaga Ligera (100 peticiones)
+                </button>
+              </div>
+
+              <!-- Barra de progreso para ráfaga -->
+              <div class="mt-3 d-none" id="burst-progress-container">
+                <div class="d-flex justify-content-between small mb-1">
+                  <span>Enviando peticiones HTTP:</span>
+                  <span id="burst-counter">0 / 100</span>
+                </div>
+                <div class="progress" style="height: 10px;">
+                  <div id="burst-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" style="width: 0%"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Panel Derecho: Dashboard de Métricas y Resultados -->
+          <div class="col-lg-8">
+            <!-- Tarjetas de Métricas -->
+            <div class="row g-3 mb-4">
+              
+              <div class="col-md-4">
+                <div class="card card-dashboard p-3 border-start border-4 border-info">
+                  <div class="text-muted small fw-bold text-uppercase">Demanda Total Recibida</div>
+                  <div class="metric-value text-dark" id="res-demanda-total">30</div>
+                  <div class="small text-muted" id="res-sub-demanda">Legítimo: 30 | Adicional: 0</div>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="card card-dashboard p-3 border-start border-4 border-warning">
+                  <div class="text-muted small fw-bold text-uppercase">Utilización del Servicio</div>
+                  <div class="metric-value text-dark" id="res-utilizacion">30.0%</div>
+                  <div class="progress mt-2" style="height: 6px;">
+                    <div id="res-utilizacion-bar" class="progress-bar bg-success" style="width: 30%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="card card-dashboard p-3 border-start border-4 border-success" id="card-disp">
+                  <div class="text-muted small fw-bold text-uppercase">Disponibilidad Reportada</div>
+                  <div class="metric-value text-success" id="res-disponibilidad">100.0%</div>
+                  <div class="small text-muted" id="res-sub-atendidas">30 de 30 atendidas</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Tarjeta de Estado del Sistema -->
+            <div class="card card-dashboard p-4 mb-4">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="fw-bold mb-0"><i class="bi bi-speedometer2 text-primary me-2"></i>Estado de Operación del Sistema</h5>
+                <span class="badge bg-success fs-6 px-3 py-2" id="res-estado-badge">Operación Normal</span>
+              </div>
+              <p class="text-muted mb-3" id="res-estado-desc">
+                El sistema opera dentro de los márgenes normales de capacidad. Todas las solicitudes legítimas están siendo atendidas sin retardo ni degradación.
+              </p>
+
+              <div class="row text-center g-2 border-top pt-3">
+                <div class="col-sm-3">
+                  <div class="small text-muted">Capacidad Nominal</div>
+                  <div class="fw-bold fs-5 text-secondary" id="res-capacidad-nom">100 u</div>
+                </div>
+                <div class="col-sm-3">
+                  <div class="small text-muted">Solicitudes Atendidas</div>
+                  <div class="fw-bold fs-5 text-success" id="res-atendidas">30.0 u</div>
+                </div>
+                <div class="col-sm-3">
+                  <div class="small text-muted">Solicitudes No Atendidas</div>
+                  <div class="fw-bold fs-5 text-danger" id="res-no-atendidas">0.0 u</div>
+                </div>
+                <div class="col-sm-3">
+                  <div class="small text-muted">Control de Mitigación</div>
+                  <div class="fw-bold fs-5 text-primary" id="res-mitigacion-info">OFF</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tabla Comparativa de Escenarios (Entregable C de la Pauta) -->
+            <div class="card card-dashboard p-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-table me-2"></i>Matriz Comparativa de los 4 Escenarios Oficiales</h6>
+                <button class="btn btn-sm btn-outline-primary" onclick="ejecutarTodosLosEscenarios()">
+                  <i class="bi bi-arrow-repeat me-1"></i>Calcular Todos
+                </button>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-sm table-hover align-middle mb-0" id="tabla-escenarios">
+                  <thead class="table-light small">
+                    <tr>
+                      <th>Escenario</th>
+                      <th>Capacidad</th>
+                      <th>Legítimo</th>
+                      <th>Adicional</th>
+                      <th>Mitigación</th>
+                      <th>Demanda Total</th>
+                      <th>Utilización</th>
+                      <th>Atendidas</th>
+                      <th>Disponibilidad</th>
+                      <th>Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody class="small" id="tabla-escenarios-body">
+                    <!-- Filas pobladas dinámicamente -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 2: LABORATORIO 5 VECTORES (PPT EQUIPO) -->
+      <!-- ========================================== -->
+      <div class="tab-pane fade" id="tab-vectores" role="tabpanel">
+        <div class="row g-4">
+          
+          <!-- Vector 1: Whaling -->
+          <div class="col-md-6">
+            <div class="card card-dashboard p-4 h-100 border-top border-4 border-primary">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="fw-bold text-primary mb-0"><i class="bi bi-envelope-exclamation-fill me-2"></i>1. Whaling / Ingeniería Social</h5>
+                <span class="badge-mitre">MITRE T1566</span>
+              </div>
+              <p class="text-muted small">Ataque dirigido al directivo institucional capturado mediante GoPhish.</p>
+              
+              <button class="btn btn-sm btn-outline-primary mb-3" onclick="cargarSimulacionWhaling()">
+                <i class="bi bi-search me-1"></i>Examinar Correo Malicioso Capturado
+              </button>
+
+              <div id="whaling-content" class="bg-light p-3 rounded border small d-none" style="max-height: 280px; overflow-y: auto;">
+                <div class="fw-bold text-danger mb-1" id="whaling-asunto"></div>
+                <div class="text-muted mb-2">De: <span id="whaling-origen"></span></div>
+                <div class="mb-2 p-2 bg-white rounded border fst-italic" id="whaling-body"></div>
+                <div class="fw-bold text-secondary">Cabeceras Forenses Analizadas:</div>
+                <pre class="bg-dark text-warning p-2 rounded small mb-0" id="whaling-headers"></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vector 2: Escalamiento de Privilegios -->
+          <div class="col-md-6">
+            <div class="card card-dashboard p-4 h-100 border-top border-4 border-warning">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-shield-slash-fill text-warning me-2"></i>2. Escalamiento de Privilegios</h5>
+                <span class="badge-mitre">MITRE T1068</span>
+              </div>
+              <p class="text-muted small">Explotación de vulnerabilidad local para elevar de usuario <code>admin</code> a <code>root</code>.</p>
+              
+              <button class="btn btn-sm btn-warning text-dark fw-bold mb-3" onclick="ejecutarPrivesc()">
+                <i class="bi bi-terminal me-1"></i>Simular Explotación Local
+              </button>
+
+              <div id="privesc-content" class="bg-dark text-light p-3 rounded font-monospace small d-none">
+                <div class="text-warning mb-1">[AUDITD LOG ENTRY]</div>
+                <div id="privesc-output" class="text-success mb-2"></div>
+                <div class="text-muted small" id="privesc-mitigacion"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vector 3: Rootkit / Persistencia -->
+          <div class="col-md-6">
+            <div class="card card-dashboard p-4 h-100 border-top border-4 border-secondary">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="fw-bold text-secondary mb-0"><i class="bi bi-eye-slash-fill me-2"></i>3. Persistencia - Rootkit</h5>
+                <span class="badge-mitre">MITRE T1014</span>
+              </div>
+              <p class="text-muted small">Ocultamiento en espacio de usuario vs Detección en memoria (LiME + Volatility 3).</p>
+              
+              <button class="btn btn-sm btn-outline-secondary mb-3" onclick="cargarRootkit()">
+                <i class="bi bi-memory me-1"></i>Comparar 'ps aux' vs Volatility 3 (linux.psscan)
+              </button>
+
+              <div id="rootkit-content" class="small d-none">
+                <div class="row g-2">
+                  <div class="col-6">
+                    <div class="fw-bold text-danger mb-1">Espacio Usuario (ps aux):</div>
+                    <div class="bg-light p-2 rounded border font-monospace" id="rootkit-ps"></div>
+                  </div>
+                  <div class="col-6">
+                    <div class="fw-bold text-success mb-1">Forense LiME/Volatility:</div>
+                    <div class="bg-dark text-success p-2 rounded font-monospace" id="rootkit-volatility"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vector 4 & 5: DDoS Cortina de Humo + Ransomware -->
+          <div class="col-md-6">
+            <div class="card card-dashboard p-4 h-100 border-top border-4 border-danger">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="fw-bold text-danger mb-0"><i class="bi bi-lock-fill me-2"></i>4 y 5. DDoS + Ransomware</h5>
+                <span class="badge-mitre">MITRE T1498 / T1486</span>
+              </div>
+              <p class="text-muted small">El DDoS satura las alertas del SOC mientras el ransomware cifra archivos financieros.</p>
+              
+              <div class="d-flex gap-2 mb-3">
+                <button class="btn btn-sm btn-danger fw-bold" onclick="ejecutarCifradoRansomware()">
+                  <i class="bi bi-file-earmark-lock2-fill me-1"></i>Simular Cifrado Masivo
+                </button>
+                <button class="btn btn-sm btn-outline-success fw-bold" onclick="restaurarBackupRansomware()">
+                  <i class="bi bi-cloud-arrow-up-fill me-1"></i>Restaurar Respaldo Offline
+                </button>
+              </div>
+
+              <!-- Lista de archivos de la víctima -->
+              <div class="bg-light p-2 rounded border small">
+                <div class="fw-bold mb-1 text-secondary">Carpeta Auditada: <code>/home/lab/victima_files/</code></div>
+                <div id="ransomware-file-list" class="font-monospace">
+                  Cargando archivos...
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 3: PORTAL FINANCIERO PÚBLICO           -->
+      <!-- ========================================== -->
+      <div class="tab-pane fade" id="tab-portal" role="tabpanel">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="card card-dashboard p-5 text-center mb-4">
+              <i class="bi bi-building-fill text-primary" style="font-size: 3rem;"></i>
+              <h3 class="fw-bold mt-2 text-primary">Plataforma de Servicios Digitales y Beneficios Financieros</h3>
+              <p class="text-muted">Gobierno de Chile · Banco Digital Seguro</p>
+              
+              <div class="row g-3 justify-content-center mt-3 text-start">
+                <div class="col-md-8">
+                  <div class="card p-4 border bg-light">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-search me-2"></i>Consulta Ciudadana de Transferencias</h6>
+                    <div class="input-group mb-3">
+                      <input type="text" class="form-control" placeholder="Ingrese su RUT (ej: 12.345.678-9)" id="portal-rut">
+                      <button class="btn btn-primary" onclick="simularConsultaPortal()">Consultar</button>
+                    </div>
+                    <div id="portal-result" class="alert alert-info py-2 small d-none">
+                      <i class="bi bi-info-circle me-1"></i> Estado del servicio: En línea. Consulta registrada en los servidores centrales.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="alert alert-warning mt-4 text-start small mb-0">
+                <i class="bi bi-shield-exclamation me-1"></i> <strong>Aviso a los Clientes:</strong> En caso de experimentar demoras o intermitencias en la consulta web debido a alta demanda o mantenciones de red, utilice los canales alternativos o sucursal presencial.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 4: CONSOLA SOC / TELEMETRÍA EN VIVO    -->
+      <!-- ========================================== -->
+      <div class="tab-pane fade" id="tab-soc" role="tabpanel">
+        <div class="card card-dashboard p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-terminal me-2 text-primary"></i>Consola de Monitoreo SOC (Security Operations Center)</h5>
+              <div class="text-muted small">Registros de Sysmon, Auditd, Simulación DoS y Alertas de Red en tiempo real.</div>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-secondary" onclick="actualizarLogs()"><i class="bi bi-arrow-clockwise me-1"></i>Actualizar</button>
+              <button class="btn btn-sm btn-outline-danger" onclick="limpiarLogs()"><i class="bi bi-trash me-1"></i>Limpiar</button>
+            </div>
+          </div>
+
+          <!-- Ventana de Terminal -->
+          <div class="terminal-box" id="terminal-screen">
+            <!-- Líneas de terminal -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Configuración inicial al cargar la página
+    document.addEventListener("DOMContentLoaded", () => {
+      cargarEscenario('A');
+      ejecutarTodosLosEscenarios();
+      actualizarLogs();
+      cargarArchivosRansomware();
+      setInterval(actualizarLogs, 4000);
+    });
+
+    // 1. Lógica del Simulador DoS/DDoS
+    function cargarEscenario(letra) {
+      const cap = document.getElementById('inp-capacidad');
+      const leg = document.getElementById('inp-legitimo');
+      const adi = document.getElementById('inp-adicional');
+      const mit = document.getElementById('inp-mitigacion');
+
+      cap.value = 100;
+      leg.value = 30;
+
+      if (letra === 'A') {
+        adi.value = 0;
+        mit.checked = false;
+      } else if (letra === 'B') {
+        adi.value = 100;
+        mit.checked = false;
+      } else if (letra === 'C') {
+        adi.value = 400;
+        mit.checked = false;
+      } else if (letra === 'D') {
+        adi.value = 400;
+        mit.checked = true;
+      }
+
+      ejecutarCalculoManual();
+    }
+
+    function ejecutarCalculoManual() {
+      const payload = {
+        capacidad: parseInt(document.getElementById('inp-capacidad').value),
+        legitimo: parseInt(document.getElementById('inp-legitimo').value),
+        adicional: parseInt(document.getElementById('inp-adicional').value),
+        mitigacion: document.getElementById('inp-mitigacion').checked
+      };
+
+      fetch('/api/simulador/calcular', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(r => r.json())
+      .then(d => {
+        // Actualizar métricas visuales
+        document.getElementById('res-demanda-total').innerText = d.demanda_total;
+        document.getElementById('res-sub-demanda').innerText = `Legítimo: ${d.legitimo} | Adicional efectivo: ${d.adicional_efectivo}`;
+        
+        document.getElementById('res-utilizacion').innerText = `${d.utilizacion_real}%`;
+        const uBar = document.getElementById('res-utilizacion-bar');
+        uBar.style.width = `${Math.min(100, d.utilizacion_pct)}%`;
+        if (d.utilizacion_real <= 70) {
+          uBar.className = 'progress-bar bg-success';
+        } else if (d.utilizacion_real <= 100) {
+          uBar.className = 'progress-bar bg-warning';
+        } else {
+          uBar.className = 'progress-bar bg-danger';
+        }
+
+        document.getElementById('res-disponibilidad').innerText = `${d.disponibilidad}%`;
+        const dispCard = document.getElementById('res-disponibilidad');
+        if (d.disponibilidad >= 90) {
+          dispCard.className = 'metric-value text-success';
+        } else if (d.disponibilidad >= 50) {
+          dispCard.className = 'metric-value text-warning';
+        } else {
+          dispCard.className = 'metric-value text-danger';
+        }
+        document.getElementById('res-sub-atendidas').innerText = `${d.legitimas_atendidas} de ${d.legitimo} legítimas atendidas`;
+
+        const badge = document.getElementById('res-estado-badge');
+        badge.className = `badge bg-${d.estado_badge} fs-6 px-3 py-2`;
+        badge.innerText = d.estado;
+
+        document.getElementById('res-capacidad-nom').innerText = `${d.capacidad} u`;
+        document.getElementById('res-atendidas').innerText = `${d.admitidas_total} u`;
+        document.getElementById('res-no-atendidas').innerText = `${d.no_atendidas_total} u`;
+        document.getElementById('res-mitigacion-info').innerText = d.mitigacion ? 'ON (-80%)' : 'OFF';
+
+        if (d.disponibilidad < 100) {
+          document.getElementById('res-estado-desc').innerText = `Alerta de Disponibilidad: El volumen de tráfico (${d.demanda_total} u) supera la capacidad máxima (${d.capacidad} u). Se están descartando ${d.legitimas_perdidas} unidades de solicitudes legítimas (${d.disponibilidad}% de disponibilidad).`;
+        } else {
+          document.getElementById('res-estado-desc').innerText = `Operación estable: Todas las solicitudes legítimas (${d.legitimo} u) están siendo atendidas en su totalidad.`;
+        }
+      });
+    }
+
+    function ejecutarTodosLosEscenarios() {
+      const escenarios = [
+        { name: "A. Operación normal", cap: 100, leg: 30, adi: 0, mit: false },
+        { name: "B. Incremento moderado", cap: 100, leg: 30, adi: 100, mit: false },
+        { name: "C. Sobrecarga crítica", cap: 100, leg: 30, adi: 400, mit: false },
+        { name: "D. Sobrecarga mitigada", cap: 100, leg: 30, adi: 400, mit: true }
+      ];
+
+      const tbody = document.getElementById('tabla-escenarios-body');
+      tbody.innerHTML = '';
+
+      escenarios.forEach(esc => {
+        fetch('/api/simulador/calcular', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            capacidad: esc.cap,
+            legitimo: esc.leg,
+            adicional: esc.adi,
+            mitigacion: esc.mit
+          })
+        })
+        .then(r => r.json())
+        .then(d => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="fw-bold">${esc.name}</td>
+            <td>${d.capacidad}</td>
+            <td>${d.legitimo}</td>
+            <td>${d.adicional_solicitado}</td>
+            <td><span class="badge ${d.mitigacion ? 'bg-primary' : 'bg-secondary'}">${d.mitigacion ? 'Activada (80%)' : 'Desactivada'}</span></td>
+            <td class="fw-bold">${d.demanda_total}</td>
+            <td><span class="badge ${d.utilizacion_real > 100 ? 'bg-danger' : (d.utilizacion_real > 70 ? 'bg-warning text-dark' : 'bg-success')}">${d.utilizacion_real}%</span></td>
+            <td>${d.legitimas_atendidas} / ${d.legitimo}</td>
+            <td class="fw-bold ${d.disponibilidad >= 90 ? 'text-success' : (d.disponibilidad >= 50 ? 'text-warning' : 'text-danger')}">${d.disponibilidad}%</td>
+            <td><span class="badge bg-${d.estado_badge}">${d.estado}</span></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    // 2. Ráfaga real de 100 peticiones
+    function lanzarRafagaReal() {
+      const container = document.getElementById('burst-progress-container');
+      const counter = document.getElementById('burst-counter');
+      const bar = document.getElementById('burst-progress-bar');
+      const btn = document.getElementById('btn-burst');
+
+      container.classList.remove('d-none');
+      btn.disabled = true;
+      let completed = 0;
+      const total = 100;
+
+      for (let i = 0; i < total; i++) {
+        fetch('/api/ping')
+          .then(r => r.json())
+          .then(() => {
+            completed++;
+            counter.innerText = `${completed} / ${total}`;
+            bar.style.width = `${completed}%`;
+            if (completed === total) {
+              setTimeout(() => {
+                btn.disabled = false;
+                actualizarLogs();
+              }, 500);
+            }
+          })
+          .catch(() => {
+            completed++;
+          });
+      }
+    }
+
+    // 3. Laboratorio de los 5 Vectores
+    function cargarSimulacionWhaling() {
+      fetch('/api/simular/whaling')
+        .then(r => r.json())
+        .then(d => {
+          document.getElementById('whaling-content').classList.remove('d-none');
+          document.getElementById('whaling-asunto').innerText = d.asunto;
+          document.getElementById('whaling-origen').innerText = d.origen;
+          document.getElementById('whaling-body').innerText = d.contenido;
+          document.getElementById('whaling-headers').innerText = JSON.stringify(d.cabeceras, null, 2);
+          actualizarLogs();
+        });
+    }
+
+    function ejecutarPrivesc() {
+      fetch('/api/simular/privesc', { method: 'POST' })
+        .then(r => r.json())
+        .then(d => {
+          document.getElementById('privesc-content').classList.remove('d-none');
+          document.getElementById('privesc-output').innerText = `[SUCCESS] ${d.usuario_anterior} ===> ${d.usuario_obtenido}\n${d.evidencia}`;
+          document.getElementById('privesc-mitigacion').innerText = `Mitigación Blue Team: ${d.mitigacion}`;
+          actualizarLogs();
+        });
+    }
+
+    function cargarRootkit() {
+      fetch('/api/simular/rootkit')
+        .then(r => r.json())
+        .then(d => {
+          document.getElementById('rootkit-content').classList.remove('d-none');
+          const psBox = document.getElementById('rootkit-ps');
+          psBox.innerHTML = d.espacio_usuario_ps.map(p => `PID ${p.pid}: ${p.name} -> ${p.status}`).join('<br>');
+
+          const volBox = document.getElementById('rootkit-volatility');
+          volBox.innerHTML = d.espacio_memoria_volatility.map(v => `PID ${v.pid}: ${v.name} [Offset: ${v.offset}]<br><span class="text-warning">${v.estado}</span>`).join('<br>');
+          actualizarLogs();
+        });
+    }
+
+    function cargarArchivosRansomware() {
+      fetch('/api/simular/ransomware/status')
+        .then(r => r.json())
+        .then(d => {
+          const list = document.getElementById('ransomware-file-list');
+          if (!d.archivos || d.archivos.length === 0) {
+            list.innerHTML = 'Sin archivos.';
+            return;
+          }
+          list.innerHTML = d.archivos.map(f => {
+            const icon = f.cifrado ? '<i class="bi bi-file-earmark-lock text-danger"></i>' : '<i class="bi bi-file-earmark-check text-success"></i>';
+            const color = f.cifrado ? 'text-danger fw-bold' : 'text-dark';
+            return `<div>${icon} <span class="${color}">${f.nombre}</span> (${f.tamano} bytes)</div>`;
+          }).join('');
+        });
+    }
+
+    function ejecutarCifradoRansomware() {
+      fetch('/api/simular/ransomware/encrypt', { method: 'POST' })
+        .then(r => r.json())
+        .then(() => {
+          cargarArchivosRansomware();
+          actualizarLogs();
+        });
+    }
+
+    function restaurarBackupRansomware() {
+      fetch('/api/simular/ransomware/restore', { method: 'POST' })
+        .then(r => r.json())
+        .then(() => {
+          cargarArchivosRansomware();
+          actualizarLogs();
+        });
+    }
+
+    // 4. Portal ciudadano
+    function simularConsultaPortal() {
+      const res = document.getElementById('portal-result');
+      res.classList.remove('d-none');
+      fetch('/api/ping');
+    }
+
+    // 5. Consola SOC
+    function actualizarLogs() {
+      fetch('/api/logs')
+        .then(r => r.json())
+        .then(d => {
+          const term = document.getElementById('terminal-screen');
+          term.innerHTML = d.logs.map(l => {
+            let color = '#4af626';
+            if (l.level === 'CRITICAL' || l.level === 'ALERT') color = '#ff4d4d';
+            else if (l.level === 'WARN') color = '#ffcc00';
+            return `<div class="terminal-line"><span style="color: #888;">[${l.timestamp}]</span> <span style="color: #64b5f6; font-weight: bold;">[${l.component}]</span> <span style="color: ${color}; font-weight: bold;">[${l.level}]</span> ${l.message}</div>`;
+          }).join('');
+          term.scrollTop = term.scrollHeight;
+        });
+    }
+
+    function limpiarLogs() {
+      fetch('/api/logs/clear', { method: 'POST' })
+        .then(() => actualizarLogs());
+    }
+  </script>
+</body>
+</html>

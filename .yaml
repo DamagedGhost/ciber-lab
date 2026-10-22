@@ -1,0 +1,6 @@
+# docker-compose.yml
+services:
+  portal:
+    build: .
+    ports:
+      - "80:80"
